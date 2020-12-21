@@ -3,35 +3,19 @@ json_file = "/data/samples.json"
 
 // Fetch the JSON data and console log it
 d3.json(json_file).then(function(data) {
+  var metaData = data.metadata;
+  var sampleData = data.samples;
+  console.log(sampleData);
+  console.log(metaData);
 
-  var sampleData = data.samples
-  console.log(sampleData)
+  var dropdown_list = d3.select(".dropdown-menu");
 
-  // Map Patient IDS for later filtering
-  //var patient_ids = sampleData.map((subject) => {
-    //return subject.id
-  //})
-  
-  // Map OTU IDS for each patient
-  //var patient_otu_ids = sampleData.map((subject) => {
-    //var text_otu_ids = []
-    //var raw_ids = subject.otu_ids
-    //raw_ids.forEach((id) => {
-      //var string = id.toString();
-      //text_otu_ids.push(`OTU ${string}`)
-    //});
-    //return text_otu_ids
-  //});
-
-  // Map OTU Samples found in each patient
-  //var patient_otu_samples = sampleData.map((subject) => {
-    //return subject.sample_values
-  //});
-
-  // Map OTU labels for each sample
-  //var patient_otu_labels = sampleData.map((subject) => {
-    //return subject.otu_labels
-  //});
+  metaData.forEach((patients) => {
+    inside_list = patients.id;
+    console.log(inside_list);
+    var list = dropdown_list.append("li")
+      list.text(inside_list)
+  });    
 
   // Filter to Select a Certain Patient to be used later with user input
   function selectPatient(person) {
@@ -39,7 +23,7 @@ d3.json(json_file).then(function(data) {
   };
   
   var patient = sampleData.filter(selectPatient);
-  console.log(patient)
+  console.log(patient);
 
   // Console log everything out to make sure everything runs
   //console.log(patient_ids);
@@ -93,7 +77,6 @@ d3.json(json_file).then(function(data) {
   
     Plotly.newPlot("bar", bar_plot_data, layout);
   };
-
   init();
 
 });
