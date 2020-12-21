@@ -9,10 +9,10 @@ d3.json(json_file).then(function(data) {
   console.log(metaData);
 
   var dropdown_list = d3.select(".dropdown-menu");
+  var demographic = d3.select('#sample-metadata')
 
   metaData.forEach((patients) => {
     inside_list = patients.id;
-    console.log(inside_list);
     var list = dropdown_list.append("li")
       list.text(inside_list)
   });    
@@ -23,15 +23,8 @@ d3.json(json_file).then(function(data) {
   };
   
   var patient = sampleData.filter(selectPatient);
-  console.log(patient);
 
-  // Console log everything out to make sure everything runs
-  //console.log(patient_ids);
-  //console.log(patient_otu_labels);
-  //console.log(patient_otu_ids);
-  //console.log(patient_otu_samples);
-
-  var patient_otu_ids = patient.map((otu) => {
+  var patient_otu_ids_text = patient.map((otu) => {
     var text_otu_ids = []
     var raw_ids = otu.otu_ids
     raw_ids.forEach((id) => {
@@ -39,6 +32,10 @@ d3.json(json_file).then(function(data) {
       text_otu_ids.push(`OTU ${string}`)
     });
     return text_otu_ids
+  });
+
+  var patient_otu_ids = patient.map((otu) => {
+    return otu.otu_ids
   });
 
   var patient_otu_samples = patient.map((otu) => {
@@ -49,17 +46,30 @@ d3.json(json_file).then(function(data) {
     return otu.otu_labels
   });
   
-  console.log(patient_otu_ids);
-  console.log(patient_otu_samples);
-  console.log(patient_otu_labels);
-  
   var patient = sampleData.filter(selectPatient);
   console.log(patient)
 
   function init() {
+    var correct_patient = []
+    var patientMetaData = metaData.forEach((patient)=> {
+      if (patient.id === 954) {
+        var patient_info = patient;
+        correct_patient.push(patient_info)
+      }
+    });
+    console.log(correct_patient);
+
+    correct_patient.forEach((instance) => {
+      // Step 3: Use 'Object.entries' to capture each UFO sighting key and value
+      Object.entries(instance).forEach(([key, value]) => {
+        var text = demographic.append("li");
+        text.text(`${key}: ${value}`)
+      });  
+    });        
+  
     var bar_plot_data = [{
       x: patient_otu_samples[0].slice(0,10),
-      y: patient_otu_ids[0].slice(0,10),
+      y: patient_otu_ids_text[0].slice(0,10),
       type: "bar",
       text: patient_otu_labels[0].slice(0,10),
       orientation: "h"
@@ -76,6 +86,33 @@ d3.json(json_file).then(function(data) {
     };
   
     Plotly.newPlot("bar", bar_plot_data, layout);
+
+    var bubble_plot_data = [{
+      x: patient_otu_ids[0],
+      y: patient_otu_samples[0],
+      text: patient_otu_labels[0],
+      mode: 'markers',
+      marker: {
+        color: patient_otu_ids[0],
+        opacity: 0.8,
+        size: patient_otu_samples[0]
+        }
+      }];
+      
+    var bubble_layout = {
+        title: 'Bubble Chart Test',
+        xaxis: {
+          title: 'OTU ID'
+        },
+        yaxis: {
+          title: 'Count in Subject/Patient'
+        },
+        showlegend: false,
+        height: 500,
+        width: 1200,
+      };
+      
+      Plotly.newPlot("bubble", bubble_plot_data, bubble_layout);
   };
   init();
 
