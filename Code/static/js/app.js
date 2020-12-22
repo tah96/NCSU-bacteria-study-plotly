@@ -1,5 +1,5 @@
 // Name local JSON file to variable
-json_file = "/data/samples.json"
+json_file = "../data/samples.json"
 
 var dropdown_list = d3.select("#selDataset");
 var demographic = d3.select('#sample-metadata');
